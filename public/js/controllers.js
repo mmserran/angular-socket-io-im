@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-function AppCtrl($scope, socket) {
+chatApp.controller('ChatCtrl', function ($scope, socket) {
 
   // Socket listeners
   // ================
@@ -22,7 +22,7 @@ function AppCtrl($scope, socket) {
 
   socket.on('user:join', function (data) {
     $scope.messages.push({
-      user: 'chatroom',
+      user: '.',
       text: 'User ' + data.name + ' has joined.'
     });
     $scope.users.push(data.name);
@@ -31,7 +31,7 @@ function AppCtrl($scope, socket) {
   // add a message to the conversation when a user disconnects or leaves the room
   socket.on('user:left', function (data) {
     $scope.messages.push({
-      user: 'chatroom',
+      user: '.',
       text: 'User ' + data.name + ' has left.'
     });
     var i, user;
@@ -57,7 +57,7 @@ function AppCtrl($scope, socket) {
     }
 
     $scope.messages.push({
-      user: 'chatroom',
+      user: '.',
       text: 'User ' + oldName + ' is now known as ' + newName + '.'
     });
   }
@@ -97,4 +97,4 @@ function AppCtrl($scope, socket) {
     // clear message box
     $scope.message = '';
   };
-}
+});

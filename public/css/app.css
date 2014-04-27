@@ -3,7 +3,7 @@
 .overflowable {
   height: 240px;
   overflow-y: auto;
-  border: 1px solid #000;
+  border: 2px solid #000;
 }
 
 .overflowable p {
@@ -17,4 +17,12 @@
 
 .clr {
   clear: both;
+}
+
+.alert {
+	font-weight:bold;
+}
+
+#scrumboard {
+	border: 2px inset #000;
 }

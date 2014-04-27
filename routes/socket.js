@@ -59,6 +59,8 @@ module.exports = function (socket) {
   });
 
   // notify other clients that a new user has joined
+  // note: socket.broadcast.emit sends to all but newly created connection
+  //       io.sockets.emit will send to all clients
   socket.broadcast.emit('user:join', {
     name: name
   });

@@ -2,4 +2,7 @@
 
 
 // Declare app level module which depends on filters, and services
-var app = angular.module('myApp', ['myApp.filters', 'myApp.directives']);
+var chatApp = angular.module('chatApp', ['chatApp.filters', 'chatApp.directives']);
+
+
+var toolApp = angular.module('toolApp', []);
