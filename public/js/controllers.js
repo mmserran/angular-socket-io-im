@@ -43,6 +43,32 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
     })
   }
 
+  $scope.drawAllNotes = function() {
+    var stage = new Kinetic.Stage({
+      container: 'scrumboardContainer',
+      width: 800,
+      height: 600
+    })
+
+    var layer = new Kinetic.Layer();
+
+    var rect = new Kinetic.Rect({
+      x: 239,
+      y: 75,
+      width: 100,
+      height: 50,
+      fill: 'green',
+      stroke: 'black',
+      strokeWidth: 4,
+      draggable: true
+    })
+
+    // add the shape to the layer
+    layer.add(rect);
+
+    // add the layer to the stage
+    stage.add(layer);
+  }
 
 })
 

@@ -1,18 +1,16 @@
 extends layout
 
 block body
-  h1 Angular Socket.io IM Demo App
+  h1 vScrum
 
   div(ng-controller='ScrumCtrl')
 
-    canvas#scrumboard
+    div#scrumboardContainer
 
     form(ng-submit='addNote()')
       input(type='submit', value='Add Note')
 
-    p hello
-    p(ng-repeat='note in notes')
-      {{note.title}}:: {{note.body}}
+    div(ng-init='drawAllNotes()')
 
 
   div(ng-controller='ChatCtrl')
