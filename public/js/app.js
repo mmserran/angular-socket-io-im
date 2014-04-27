@@ -5,4 +5,4 @@
 var chatApp = angular.module('chatApp', ['chatApp.filters', 'chatApp.directives']);
 
 
-var toolApp = angular.module('toolApp', []);
+var scrumApp = angular.module('scrumApp', []);

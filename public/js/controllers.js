@@ -2,6 +2,50 @@
 
 /* Controllers */
 
+scrumApp.controller('ScrumCtrl', function ($scope, socket) {
+
+  // Socket listeners
+  // ================
+
+  socket.on('scrum:addNote', function() {
+    $scope.notes.push({
+      title: 'Untitled',
+      body: '',
+      pts: 0,
+      x: 6,
+      y: 6
+    })
+  })
+
+  // Private helpers
+  // ===============
+
+
+
+
+  // Methods published to the scope
+  // ==============================
+
+  $scope.notes = [];
+
+  $scope.addNote = function() {
+
+    socket.emit('scrum:addNote', {
+    });
+
+    // add note to our model locally
+    $scope.notes.push({
+      title: 'Untitled',
+      body: '',
+      pts: 0,
+      x: 6,
+      y: 6
+    })
+  }
+
+
+})
+
 chatApp.controller('ChatCtrl', function ($scope, socket) {
 
   // Socket listeners

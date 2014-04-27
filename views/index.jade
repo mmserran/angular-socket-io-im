@@ -3,7 +3,17 @@ extends layout
 block body
   h1 Angular Socket.io IM Demo App
 
-  canvas#scrumboard
+  div(ng-controller='ScrumCtrl')
+
+    canvas#scrumboard
+
+    form(ng-submit='addNote()')
+      input(type='submit', value='Add Note')
+
+    p hello
+    p(ng-repeat='note in notes')
+      {{note.title}}:: {{note.body}}
+
 
   div(ng-controller='ChatCtrl')
 
@@ -33,6 +43,7 @@ block body
 
   script(src='js/lib/angular/angular.js')
   script(src='js/lib/kinetic-v5.1.0.min.js')
+  script(src='js/lib/angular.ng-modules.js')
   script(src='/socket.io/socket.io.js')
   script(src='js/app.js')
   script(src='js/services.js')
