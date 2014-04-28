@@ -19,7 +19,18 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   // Private helpers
   // ===============
+
   function newNote(obj, layer) {
+    // add data to model
+    $scope.notes.push({
+      title: 'Untitled',
+      body: '',
+      pts: 0,
+      x: 6,
+      y: 6
+    })
+
+    // propagte change to canvas
     var node = new Kinetic.Rect({
       x: Math.random()*(1000-100),
       y: Math.random()*(400-100),
@@ -35,6 +46,14 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
     layer.add(node);
   }
 
+  function drawModelToCanvas() {
+    // build data
+    // for note in notes, add note to layer
+
+    // render data
+    // add the layer to the stage
+    $scope.stage.add($scope.layer);
+  }
 
 
   // Methods published to the scope
@@ -44,38 +63,35 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   $scope.addNote = function() {
 
-    socket.emit('scrum:addNote', {
-    });
-
-    // add note to our model locally
-    $scope.notes.push({
+    var blankNote = {
       title: 'Untitled',
       body: '',
       pts: 0,
       x: 6,
       y: 6
-    });
+    }
 
+    // manipulate the model
+    newNote(blankNote, $scope.layer);
+
+    // update the view (canvas)
+    drawModelToCanvas();
   }
 
-  $scope.drawAllToCanvas = function() {
+  $scope.initCanvas = function() {
     var stage = new Kinetic.Stage({
       container: 'scrumCanvas',
       width: 1000,
       height: 400,
     })
+    $scope.stage = stage;
 
     var layer = new Kinetic.Layer();
+    $scope.layer = layer;
 
-
-    // add the shape to the layer
-    for( var i=0; i<3; i++) {
-      newNote($scope.notes[0], layer);
-    }
-    alert($scope.notes.length);
-    // add the layer to the stage
-    stage.add(layer);
+    drawModelToCanvas();
   }
+
 
 })
 
