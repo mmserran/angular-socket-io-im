@@ -3,7 +3,7 @@ extends layout
 block body
   h1 vScrum
 
-  div
+  div(ng-controller='ScrumCtrl')
 
     div#scrumCanvas
 
@@ -13,7 +13,7 @@ block body
     div(ng-init='initCanvas()')
 
 
-  div
+  div(ng-controller='ChatCtrl')
 
     .col
       h3 Messages

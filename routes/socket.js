@@ -61,7 +61,7 @@ module.exports = function (socket) {
   // broadcast a user's message to other users
   socket.on('scrum:addNote', function (data) {
     socket.broadcast.emit('scrum:addNote', {
-      stuff: name
+      name: name
     });
   });
 

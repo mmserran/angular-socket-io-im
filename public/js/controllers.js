@@ -7,22 +7,8 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   // Socket listeners
   // ================
 
-
-
-  // Private helpers
-  // ===============
-
-  function newNote(obj, layer) {
-    // add data to model
-    $scope.notes.push({
-      title: 'Untitled',
-      body: '',
-      pts: 0,
-      x: 6,
-      y: 6
-    })
-
-    // propagte change to canvas
+  socket.on('scrum:addNote', function (obj) {
+    // add note to local model
     var node = new Kinetic.Rect({
       x: Math.random()*(1000-100),
       y: Math.random()*(400-100),
@@ -35,10 +21,31 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
       draggable: true
     });
 
-    layer.add(node);
+    $scope.layer.add(node);
+
+    drawModelToCanvas();
+  });
+
+
+
+  // Private helpers
+  // ===============
+
+  var newNote = function (obj, layer) {
+    // add data to model
+    $scope.notes.push({
+      title: 'Untitled',
+      body: '',
+      pts: 0,
+      x: 6,
+      y: 6
+    });
+
+    // propagate change to canvas
+
   }
 
-  function drawModelToCanvas() {
+  var drawModelToCanvas = function () {
     // build data
     // for note in notes, add note to layer
 
@@ -53,9 +60,36 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   $scope.notes = [];
 
-/*
+  $scope.addNote = function () {
+    var blankNote = {
+      title: 'Untitled',
+      body: '',
+      pts: 0,
+      x: 6,
+      y: 6
+    };
 
-*/
+    socket.emit('scrum:addNote', blankNote);
+
+    // manipulate the model
+    var node = new Kinetic.Rect({
+      x: Math.random()*(1000-100),
+      y: Math.random()*(400-100),
+      
+      width: 100,
+      height: 100,
+      fill: 'green',
+      stroke: 'black',
+      strokeWidth: 4,
+      draggable: true
+    });
+
+    $scope.layer.add(node);
+
+    // update the view (canvas)
+    drawModelToCanvas();
+  }
+
   $scope.initCanvas = function() {
     var stage = new Kinetic.Stage({
       container: 'scrumCanvas',
@@ -71,16 +105,13 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   }
 
 
+
 })
 
 chatApp.controller('ChatCtrl', function ($scope, socket) {
 
   // Socket listeners
   // ================
-
-  socket.on('scrum:addNote', function() {
-    alert('received Note!!');
-  })
 
   socket.on('init', function (data) {
     $scope.name = data.name;
@@ -140,25 +171,7 @@ chatApp.controller('ChatCtrl', function ($scope, socket) {
   // Methods published to the scope
   // ==============================
 
-  $scope.addNote = function () {
-    alert('addNote before');
-    var blankNote = {
-      title: 'Untitled',
-      body: '',
-      pts: 0,
-      x: 6,
-      y: 6
-    }
 
-    socket.emit('scrum:addNote', blankNote);
-
-    // manipulate the model
-    //newNote(blankNote, $scope.layer);
-
-    // update the view (canvas)
-    //drawModelToCanvas();
-    alert('addNote after');
-  }
 
   $scope.changeName = function () {
     socket.emit('change:name', {
