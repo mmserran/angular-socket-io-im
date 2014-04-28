@@ -7,15 +7,7 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   // Socket listeners
   // ================
 
-  socket.on('scrum:addNote', function() {
-    $scope.notes.push({
-      title: 'Untitled',
-      body: '',
-      pts: 0,
-      x: 6,
-      y: 6
-    })
-  })
+
 
   // Private helpers
   // ===============
@@ -61,23 +53,9 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   $scope.notes = [];
 
-  $scope.addNote = function() {
+/*
 
-    var blankNote = {
-      title: 'Untitled',
-      body: '',
-      pts: 0,
-      x: 6,
-      y: 6
-    }
-
-    // manipulate the model
-    newNote(blankNote, $scope.layer);
-
-    // update the view (canvas)
-    drawModelToCanvas();
-  }
-
+*/
   $scope.initCanvas = function() {
     var stage = new Kinetic.Stage({
       container: 'scrumCanvas',
@@ -99,6 +77,10 @@ chatApp.controller('ChatCtrl', function ($scope, socket) {
 
   // Socket listeners
   // ================
+
+  socket.on('scrum:addNote', function() {
+    alert('received Note!!');
+  })
 
   socket.on('init', function (data) {
     $scope.name = data.name;
@@ -157,6 +139,26 @@ chatApp.controller('ChatCtrl', function ($scope, socket) {
 
   // Methods published to the scope
   // ==============================
+
+  $scope.addNote = function () {
+    alert('addNote before');
+    var blankNote = {
+      title: 'Untitled',
+      body: '',
+      pts: 0,
+      x: 6,
+      y: 6
+    }
+
+    socket.emit('scrum:addNote', blankNote);
+
+    // manipulate the model
+    //newNote(blankNote, $scope.layer);
+
+    // update the view (canvas)
+    //drawModelToCanvas();
+    alert('addNote after');
+  }
 
   $scope.changeName = function () {
     socket.emit('change:name', {

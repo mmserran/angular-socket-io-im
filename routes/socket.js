@@ -58,6 +58,13 @@ module.exports = function (socket) {
     users: userNames.get()
   });
 
+  // broadcast a user's message to other users
+  socket.on('scrum:addNote', function (data) {
+    socket.broadcast.emit('scrum:addNote', {
+      stuff: name
+    });
+  });
+
   // notify other clients that a new user has joined
   // note: socket.broadcast.emit sends to all but newly created connection
   //       io.sockets.emit will send to all clients
