@@ -5,12 +5,12 @@ block body
 
   div(ng-controller='ScrumCtrl')
 
-    div#scrumboardContainer
+    div#scrumCanvas
 
     form(ng-submit='addNote()')
       input(type='submit', value='Add Note')
 
-    div(ng-init='drawAllNotes()')
+    div(ng-init='drawAllToCanvas()')
 
 
   div(ng-controller='ChatCtrl')

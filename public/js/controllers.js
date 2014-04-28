@@ -19,7 +19,21 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   // Private helpers
   // ===============
+  function newNote(obj, layer) {
+    var node = new Kinetic.Rect({
+      x: Math.random()*(1000-100),
+      y: Math.random()*(400-100),
+      
+      width: 100,
+      height: 100,
+      fill: 'green',
+      stroke: 'black',
+      strokeWidth: 4,
+      draggable: true
+    });
 
+    layer.add(node);
+  }
 
 
 
@@ -40,32 +54,25 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
       pts: 0,
       x: 6,
       y: 6
-    })
+    });
+
   }
 
-  $scope.drawAllNotes = function() {
+  $scope.drawAllToCanvas = function() {
     var stage = new Kinetic.Stage({
-      container: 'scrumboardContainer',
-      width: 800,
-      height: 600
+      container: 'scrumCanvas',
+      width: 1000,
+      height: 400,
     })
 
     var layer = new Kinetic.Layer();
 
-    var rect = new Kinetic.Rect({
-      x: 239,
-      y: 75,
-      width: 100,
-      height: 50,
-      fill: 'green',
-      stroke: 'black',
-      strokeWidth: 4,
-      draggable: true
-    })
 
     // add the shape to the layer
-    layer.add(rect);
-
+    for( var i=0; i<3; i++) {
+      newNote($scope.notes[0], layer);
+    }
+    alert($scope.notes.length);
     // add the layer to the stage
     stage.add(layer);
   }

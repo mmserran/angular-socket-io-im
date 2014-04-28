@@ -22,3 +22,11 @@
 .alert {
 	font-weight:bold;
 }
+
+#scrumCanvas {
+  width: 1000px;
+  height: 400px;
+  margin-left: auto;
+  margin-right: auto;
+	border: 2px solid #000;
+}
