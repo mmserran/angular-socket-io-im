@@ -7,7 +7,7 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   // Socket listeners
   // ================
 
-  socket.on('scrum:updateNote', function (newInfo) {
+  socket.on('scrum:updateView', function () {
     updateView();
 
   });
@@ -34,7 +34,8 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   var updateView = function () {
     
-    var msg = '';
+    $scope.layer.removeChildren();
+
     for (var i=0; i<$scope.notes.length; i++) {
       drawNote($scope.notes[i], $scope.layer);
     }
@@ -139,8 +140,6 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
     $scope.stage = stage;
 
     var layer = new Kinetic.Layer();
-    layer.clearBeforeDraw = true;
-
     $scope.layer = layer;
 
     $scope.stage.add($scope.layer);
