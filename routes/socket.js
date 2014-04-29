@@ -144,7 +144,7 @@ module.exports = function (socket) {
       pts: data.pts,
       x: data.x,
       y: data.y,
-      id: model.getNextId()
+      id: data.id
     });
   });
 

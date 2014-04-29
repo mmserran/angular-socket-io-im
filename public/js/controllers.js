@@ -11,6 +11,7 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
     for (var i = 0; i<data.notes.length; i++) {
       $scope.notes.push(JSON.parse(data.notes[i]));
     }
+    
   });
 
   socket.on('scrum:updateModel', function (obj) {
@@ -48,9 +49,8 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
       pts: obj.pts,
       x: obj.x,
       y: obj.y,
-      id: obj.id
+      id: getIndex()
     });
-
 
   });
 
