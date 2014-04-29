@@ -9,9 +9,28 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   socket.on('scrum:addNote', function (obj) {
     // add note to local model
+    drawNote(obj, $scope.layer);
+
+    // add data to model
+    $scope.notes.push({
+      title: obj.title,
+      body: obj.body,
+      pts: obj.pts,
+      x: obj.x,
+      y: obj.y
+    });
+
+  });
+
+
+
+  // Private helpers
+  // ===============
+
+  var drawNote = function (obj, layer) {
     var node = new Kinetic.Rect({
-      x: Math.random()*(1000-100),
-      y: Math.random()*(400-100),
+      x: obj.x,
+      y: obj.y,
       
       width: 100,
       height: 100,
@@ -23,32 +42,12 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
     $scope.layer.add(node);
 
-    drawModelToCanvas();
-  });
-
-
-
-  // Private helpers
-  // ===============
-
-  var newNote = function (obj, layer) {
-    // add data to model
-    $scope.notes.push({
-      title: 'Untitled',
-      body: '',
-      pts: 0,
-      x: 6,
-      y: 6
-    });
-
     // propagate change to canvas
+    drawModelToCanvas();
 
   }
 
   var drawModelToCanvas = function () {
-    // build data
-    // for note in notes, add note to layer
-
     // render data
     // add the layer to the stage
     $scope.stage.add($scope.layer);
@@ -60,35 +59,25 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   $scope.notes = [];
 
+
   $scope.addNote = function () {
     var blankNote = {
       title: 'Untitled',
       body: '',
       pts: 0,
-      x: 6,
-      y: 6
+      x: Math.random() * (1000-100),
+      y: Math.random() * (400-100)
     };
 
-    socket.emit('scrum:addNote', blankNote);
-
-    // manipulate the model
-    var node = new Kinetic.Rect({
-      x: Math.random()*(1000-100),
-      y: Math.random()*(400-100),
-      
-      width: 100,
-      height: 100,
-      fill: 'green',
-      stroke: 'black',
-      strokeWidth: 4,
-      draggable: true
+    // notify others to update model
+    socket.emit('scrum:addNote', blankNote, function (result) {
+      ;
     });
 
-    $scope.layer.add(node);
-
-    // update the view (canvas)
-    drawModelToCanvas();
-  }
+    // update our own model
+    $scope.notes.push(blankNote);
+    drawNote(blankNote, $scope.layer);
+  };
 
   $scope.initCanvas = function() {
     var stage = new Kinetic.Stage({
