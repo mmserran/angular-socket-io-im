@@ -77,7 +77,11 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   }
 
   var drawNote = function (obj, layer) {
-    var note = new Kinetic.Rect({
+
+    var note = new Kinetic.Group({
+      draggable: true
+    });
+    var paper = new Kinetic.Rect({
       x: obj.x,
       y: obj.y,
       
@@ -86,26 +90,37 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
       fill: 'green',
       stroke: 'black',
       strokeWidth: 4,
-      draggable: true,
       id: 'n' + obj.id
+    });
+    var id = new Kinetic.Text({
+      x: obj.x + 42,
+      y: obj.y + 32,
+      text: obj.id,
+      fontSize: 30,
+      fontFamily: 'Calibri',
+      fill: 'black'
     });
     note.on('dragstart', function () {
       $scope.blocking = true;
     });
     note.on('dragend', function () {
-      var coords = note.getPosition();
-      $scope.notes[obj.id-1].x = coords.x;
-      $scope.notes[obj.id-1].y = coords.y;
+      var coords = note.getAbsolutePosition();
+      var newX = coords.x + obj.x;
+      var newY = coords.y + obj.y;
+      $scope.notes[obj.id-1].x = newX;
+      $scope.notes[obj.id-1].y = newY;
       socket.emit('scrum:updateModel', {
         title: obj.title,
         body: obj.body,
         pts: obj.pts,
-        x: coords.x,
-        y: coords.y,
+        x: newX,
+        y: newY,
         id: obj.id
       });
       $scope.blocking = false;
     });
+    note.add(paper);
+    note.add(id);
     $scope.layer.add(note);
 
     // propagate change to canvas
@@ -140,24 +155,7 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   // ==============================
   $scope.blocking = false;
   $scope.notes = [];
-
-  $scope.updateNote = function () {
-    var obj = {
-      id: 1
-    }
-
-    // notify others to update model
-    socket.emit('scrum:updateNote', {
-      id: obj.id
-    }, function (result) {
-      ;
-    });
-
-    // update our own model
-    updateView();
-
-    // draw note to canvas
-  };
+  $scope.size = 0;
 
   $scope.createNote = function () {
 

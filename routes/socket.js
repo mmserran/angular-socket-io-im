@@ -50,6 +50,7 @@ var userNames = (function () {
 
 var model = (function () {
   var notes = [];
+  var nextId = 1;
 
   var get = function (name) {
     return notes;
@@ -69,6 +70,29 @@ var model = (function () {
     }
   };
 
+  var indexList = {}
+  var avail = function (index) {
+    if (!index || indexList[index]) {
+      return false;
+    } else {
+      indexList[index] = true;
+      return true;
+    }
+  }
+
+  // find the lowest unused index and claim it
+  var getNextId = function () {
+    var index,
+      nextId = 1;
+
+    do {
+      index = 'n' + nextId;
+      nextId += 1;
+    } while (!avail(index));
+
+    return nextId-1;
+  }
+
   // this maintains the server model
 
 
@@ -76,6 +100,7 @@ var model = (function () {
     get: get,
     addNote: addNote,
     updateNote: updateNote,
+    getNextId: getNextId
   };
 }());
 
@@ -119,7 +144,7 @@ module.exports = function (socket) {
       pts: data.pts,
       x: data.x,
       y: data.y,
-      id: data.id
+      id: model.getNextId()
     });
   });
 
