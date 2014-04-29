@@ -59,11 +59,11 @@ var model = (function () {
     notes.push(obj);
   };
 
-  var editNote = function (obj) {
+  var updateNote = function (obj) {
     for (var i = 0; i<notes.length; i++) {
 
-      if (JSON.parse(notes[i]).title 
-        == JSON.parse(obj).title) {
+      if (JSON.parse(notes[i]).id 
+        == JSON.parse(obj).id) {
         notes[i] = obj;
       }
     }
@@ -75,7 +75,7 @@ var model = (function () {
   return {
     get: get,
     addNote: addNote,
-    updateNote: editNote,
+    updateNote: updateNote,
   };
 }());
 
