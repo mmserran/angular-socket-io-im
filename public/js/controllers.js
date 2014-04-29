@@ -79,7 +79,9 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   }
 
   var drawNote = function (obj, layer) {
-
+    if (obj.title == '@null') {
+      return;
+    }
     var note = new Kinetic.Group({
       draggable: true
     });
@@ -183,12 +185,10 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   };
 
   $scope.deleteNote = function () {
-    var deadmanID = 1;
-    alert('deleting' + deadmanID);
     socket.emit('scrum:deleteNote', {
-      id: deadmanID
+      id: $scope.deadmanID-1
     })
-    $scope.notes[deadmanID].title = '@null';
+    $scope.notes[$scope.deadmanID-1].title = '@null';
   }
 
   $scope.initCanvas = function() {

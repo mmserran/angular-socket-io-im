@@ -75,6 +75,18 @@ var model = (function () {
     }
   };
 
+  var deleteNote = function (obj) {
+
+    note = JSON.parse(notes[obj.id]);
+    notes[obj.id] = JSON.stringify({
+      title: '@null',
+      body: note.body,
+      pts: note.pts,
+      x: note.x,
+      y: note.y,
+      id: note.id
+    });
+  };
   // this maintains the server model
 
 
@@ -82,6 +94,7 @@ var model = (function () {
     get: get,
     addNote: addNote,
     updateNote: updateNote,
+    deleteNote: deleteNote,
     getFreeId: getFreeId
   };
 }());
@@ -113,6 +126,7 @@ module.exports = function (socket) {
   });
 
   socket.on('scrum:deleteNote', function (data) {
+    model.deleteNote(data);
     socket.broadcast.emit('scrum:deleteNote', {
       id: data.id
     });
