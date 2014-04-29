@@ -7,9 +7,30 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   // Socket listeners
   // ================
 
-  socket.on('scrum:updateView', function () {
-    updateView();
+  socket.on('scrum:updateModel', function (obj) {
 
+    // update the model
+    $scope.notes[obj.id-1].x = obj.x;
+    $scope.notes[obj.id-1].y = obj.y;
+
+    // animate obj to new position
+  /*
+    var name = '#n'+obj.id;
+    var note = $scope.stage.find(name);
+    var tween = new Kinetic.Tween({
+      node: note, 
+      duration: 3,
+      x: 5,
+      y: -5,
+      easing: Kinetic.Easings.StrongEaseIn,
+    }).play();
+  */
+  });
+
+  socket.on('scrum:updateView', function () {
+    if (!$scope.blocking) {
+      updateView();
+    }
   });
 
   socket.on('scrum:createNote', function (obj) {
@@ -27,6 +48,12 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   });
 
+  socket.on('scrum:deleteNote', function (obj) {
+
+    // add data to model
+    $scope.notes[obj.id].title = '@null';
+
+  });
 
 
   // Private helpers
@@ -38,12 +65,13 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
     for (var i=0; i<$scope.notes.length; i++) {
       drawNote($scope.notes[i], $scope.layer);
+      
     }
 
   }
 
   var drawNote = function (obj, layer) {
-    var node = new Kinetic.Rect({
+    var note = new Kinetic.Rect({
       x: obj.x,
       y: obj.y,
       
@@ -52,17 +80,29 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
       fill: 'green',
       stroke: 'black',
       strokeWidth: 4,
-      draggable: true
+      draggable: true,
+      id: 'n' + obj.id
     });
-
-
-    $scope.layer.add(node);
+    note.on('dragstart', function () {
+      $scope.blocking = true;
+    });
+    note.on('dragend', function () {
+      var coords = note.getPosition();
+      $scope.notes[obj.id-1].x = coords.x;
+      $scope.notes[obj.id-1].y = coords.y;
+      socket.emit('scrum:updateModel', {
+        id: obj.id,
+        x: coords.x,
+        y: coords.y
+      });
+      $scope.blocking = false;
+    });
+    $scope.layer.add(note);
 
     // propagate change to canvas
     $scope.stage.add($scope.layer);
 
   }
-
 
   var indexList = {}
   var avail = function (index) {
@@ -89,7 +129,7 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   // Methods published to the scope
   // ==============================
-
+  $scope.blocking = false;
   $scope.notes = [];
 
   $scope.updateNote = function () {
@@ -129,7 +169,19 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
     // update our own model
     $scope.notes.push(blankNote);
+
+    // draw a temp obj to our canvas
+    drawNote(blankNote, {});
   };
+
+  $scope.deleteNote = function () {
+    var deadmanID = 1;
+    alert('deleting' + deadmanID);
+    socket.emit('scrum:deleteNote', {
+      id: deadmanID
+    })
+    $scope.notes[deadmanID].title = '@null';
+  }
 
   $scope.initCanvas = function() {
     var stage = new Kinetic.Stage({
@@ -211,8 +263,6 @@ chatApp.controller('ChatCtrl', function ($scope, socket) {
 
   // Methods published to the scope
   // ==============================
-
-
 
   $scope.changeName = function () {
     socket.emit('change:name', {

@@ -61,9 +61,22 @@ module.exports = function (socket) {
 
   setInterval(function () {
     socket.emit('scrum:updateView', {});
-  }, 1000)
+  }, 6000)
 
+  socket.on('scrum:updateModel', function (data) {
+    socket.broadcast.emit('scrum:updateModel', {
+      id: data.id,
+      x: data.x,
+      y: data.y
+    });
+  });
 
+  socket.on('scrum:deleteNote', function (data) {
+    socket.broadcast.emit('scrum:deleteNote', {
+      id: data.id
+    });
+  });
+  
   // broadcast a user's message to other users
   socket.on('scrum:createNote', function (data) {
     socket.broadcast.emit('scrum:createNote', {
