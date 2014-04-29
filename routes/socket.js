@@ -48,6 +48,37 @@ var userNames = (function () {
   };
 }());
 
+var model = (function () {
+  var notes = [];
+
+  var get = function (name) {
+    return notes;
+  };
+
+  var addNote = function (obj) {
+    notes.push(obj);
+  };
+
+  var editNote = function (obj) {
+    for (var i = 0; i<notes.length; i++) {
+
+      if (JSON.parse(notes[i]).title 
+        == JSON.parse(obj).title) {
+        notes[i] = obj;
+      }
+    }
+  };
+
+  // this maintains the server model
+
+
+  return {
+    get: get,
+    addNote: addNote,
+    updateNote: editNote,
+  };
+}());
+
 // export function for listening to the socket
 module.exports = function (socket) {
   var name = userNames.getGuestName();
@@ -55,15 +86,17 @@ module.exports = function (socket) {
   // send the new user their name and a list of users
   socket.emit('init', {
     name: name,
-    users: userNames.get()
+    users: userNames.get(),
+    notes: model.get()
   });
 
 
   setInterval(function () {
     socket.emit('scrum:updateView', {});
-  }, 6000)
+  }, 600)
 
   socket.on('scrum:updateModel', function (data) {
+    model.updateNote(JSON.stringify(data));
     socket.broadcast.emit('scrum:updateModel', {
       id: data.id,
       x: data.x,
@@ -79,6 +112,7 @@ module.exports = function (socket) {
   
   // broadcast a user's message to other users
   socket.on('scrum:createNote', function (data) {
+    model.addNote(JSON.stringify(data));
     socket.broadcast.emit('scrum:createNote', {
       title: data.title,
       body: data.body,

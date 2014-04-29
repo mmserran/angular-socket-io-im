@@ -7,6 +7,12 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   // Socket listeners
   // ================
 
+  socket.on('init', function (data) {
+    for (var i = 0; i<data.notes.length; i++) {
+      $scope.notes.push(JSON.parse(data.notes[i]));
+    }
+  });
+
   socket.on('scrum:updateModel', function (obj) {
 
     // update the model
@@ -91,9 +97,12 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
       $scope.notes[obj.id-1].x = coords.x;
       $scope.notes[obj.id-1].y = coords.y;
       socket.emit('scrum:updateModel', {
-        id: obj.id,
+        title: obj.title,
+        body: obj.body,
+        pts: obj.pts,
         x: coords.x,
-        y: coords.y
+        y: coords.y,
+        id: obj.id
       });
       $scope.blocking = false;
     });
