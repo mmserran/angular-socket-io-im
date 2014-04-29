@@ -50,14 +50,19 @@ var userNames = (function () {
 
 var model = (function () {
   var notes = [];
-  var nextId = 1;
+  var freeId = 0;
 
-  var get = function (name) {
+  var get = function (obj) {
     return notes;
+  };
+
+  var getFreeId = function (obj) {
+    return freeId;
   };
 
   var addNote = function (obj) {
     notes.push(obj);
+    freeId = JSON.parse(obj).id;
   };
 
   var updateNote = function (obj) {
@@ -70,29 +75,6 @@ var model = (function () {
     }
   };
 
-  var indexList = {}
-  var avail = function (index) {
-    if (!index || indexList[index]) {
-      return false;
-    } else {
-      indexList[index] = true;
-      return true;
-    }
-  }
-
-  // find the lowest unused index and claim it
-  var getNextId = function () {
-    var index,
-      nextId = 1;
-
-    do {
-      index = 'n' + nextId;
-      nextId += 1;
-    } while (!avail(index));
-
-    return nextId-1;
-  }
-
   // this maintains the server model
 
 
@@ -100,7 +82,7 @@ var model = (function () {
     get: get,
     addNote: addNote,
     updateNote: updateNote,
-    getNextId: getNextId
+    getFreeId: getFreeId
   };
 }());
 
@@ -112,7 +94,8 @@ module.exports = function (socket) {
   socket.emit('init', {
     name: name,
     users: userNames.get(),
-    notes: model.get()
+    notes: model.get(),
+    freeId: model.getFreeId()
   });
 
 

@@ -11,7 +11,9 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
     for (var i = 0; i<data.notes.length; i++) {
       $scope.notes.push(JSON.parse(data.notes[i]));
     }
-    
+    for (var i = 1; i<=data.freeId; i++) {
+      $scope.indexList['n' + i] = true;
+    }
   });
 
   socket.on('scrum:updateModel', function (obj) {
@@ -128,12 +130,11 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   }
 
-  var indexList = {}
   var avail = function (index) {
-    if (!index || indexList[index]) {
+    if (!index || $scope.indexList[index]) {
       return false;
     } else {
-      indexList[index] = true;
+      $scope.indexList[index] = true;
       return true;
     }
   }
@@ -155,7 +156,7 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   // ==============================
   $scope.blocking = false;
   $scope.notes = [];
-  $scope.size = 0;
+  $scope.indexList = {};
 
   $scope.createNote = function () {
 
