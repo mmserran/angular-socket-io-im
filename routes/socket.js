@@ -59,15 +59,24 @@ module.exports = function (socket) {
   });
 
   // broadcast a user's message to other users
-  socket.on('scrum:addNote', function (data) {
-    socket.broadcast.emit('scrum:addNote', {
+  socket.on('scrum:createNote', function (data) {
+    socket.broadcast.emit('scrum:createNote', {
       title: data.title,
       body: data.body,
       pts: data.pts,
       x: data.x,
-      y: data.y
+      y: data.y,
+      id: data.id
     });
   });
+
+  // tell users to update position of obj
+  socket.on('scrum:updateNote', function (data) {
+    socket.broadcast.emit('scrum:updateNote', {
+      id: data.id
+    });
+  });
+
 
   // notify other clients that a new user has joined
   // note: socket.broadcast.emit sends to all but newly created connection

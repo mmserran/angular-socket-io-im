@@ -7,9 +7,12 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   // Socket listeners
   // ================
 
-  socket.on('scrum:addNote', function (obj) {
-    // add note to local model
-    drawNote(obj, $scope.layer);
+  socket.on('scrum:updateNote', function (newInfo) {
+    updateView();
+
+  });
+
+  socket.on('scrum:createNote', function (obj) {
 
     // add data to model
     $scope.notes.push({
@@ -17,8 +20,10 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
       body: obj.body,
       pts: obj.pts,
       x: obj.x,
-      y: obj.y
+      y: obj.y,
+      id: obj.id
     });
+
 
   });
 
@@ -26,6 +31,15 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
 
   // Private helpers
   // ===============
+
+  var updateView = function () {
+    
+    var msg = '';
+    for (var i=0; i<$scope.notes.length; i++) {
+      drawNote($scope.notes[i], $scope.layer);
+    }
+
+  }
 
   var drawNote = function (obj, layer) {
     var node = new Kinetic.Rect({
@@ -40,43 +54,80 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
       draggable: true
     });
 
+
     $scope.layer.add(node);
 
     // propagate change to canvas
-    drawModelToCanvas();
-
-  }
-
-  var drawModelToCanvas = function () {
-    // render data
-    // add the layer to the stage
     $scope.stage.add($scope.layer);
+
   }
 
+
+  var indexList = {}
+  var avail = function (index) {
+    if (!index || indexList[index]) {
+      return false;
+    } else {
+      indexList[index] = true;
+      return true;
+    }
+  }
+
+  // find the lowest unused index and claim it
+  var getIndex = function () {
+    var index,
+      nextId = 1;
+
+    do {
+      index = 'n' + nextId;
+      nextId += 1;
+    } while (!avail(index));
+
+    return nextId-1;
+  }
 
   // Methods published to the scope
   // ==============================
 
   $scope.notes = [];
 
+  $scope.updateNote = function () {
+    var obj = {
+      id: 1
+    }
 
-  $scope.addNote = function () {
+    // notify others to update model
+    socket.emit('scrum:updateNote', {
+      id: obj.id
+    }, function (result) {
+      ;
+    });
+
+    // update our own model
+    updateView();
+
+    // draw note to canvas
+  };
+
+  $scope.createNote = function () {
+
+    var index = getIndex();
     var blankNote = {
       title: 'Untitled',
       body: '',
       pts: 0,
       x: Math.random() * (1000-100),
-      y: Math.random() * (400-100)
+      y: Math.random() * (400-100),
+      id: index
     };
 
     // notify others to update model
-    socket.emit('scrum:addNote', blankNote, function (result) {
+    socket.emit('scrum:createNote', blankNote, function (result) {
       ;
     });
 
     // update our own model
     $scope.notes.push(blankNote);
-    drawNote(blankNote, $scope.layer);
   };
 
   $scope.initCanvas = function() {
@@ -88,9 +139,11 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
     $scope.stage = stage;
 
     var layer = new Kinetic.Layer();
+    layer.clearBeforeDraw = true;
+
     $scope.layer = layer;
 
-    drawModelToCanvas();
+    $scope.stage.add($scope.layer);
   }
 
 

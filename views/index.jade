@@ -7,8 +7,11 @@ block body
 
     div#scrumCanvas
 
-    form(ng-submit='addNote()')
+    form(ng-submit='createNote()')
       input(type='submit', value='Add Note')
+
+    form(ng-submit='updateNote()')
+      input(type='submit', value='Move Note')
 
     div(ng-init='initCanvas()')
 
