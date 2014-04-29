@@ -185,6 +185,12 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   };
 
   $scope.deleteNote = function () {
+
+    var id = $scope.deadmanID - 1;
+    if (id<0 || id>$scope.indexList.length) {
+      return;
+    };
+
     socket.emit('scrum:deleteNote', {
       id: $scope.deadmanID-1
     })
