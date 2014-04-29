@@ -11,7 +11,7 @@ block body
       input(type='submit', value='Add Note')
 
     form(ng-submit='deleteNote()')
-      input(ng-model='deadmanID')
+      input(ng-model='deadmanID', required)
       input(type='submit', value='Delete Note')
 
     div(ng-init='initCanvas()')

@@ -185,16 +185,16 @@ scrumApp.controller('ScrumCtrl', function ($scope, socket) {
   };
 
   $scope.deleteNote = function () {
-
-    var id = $scope.deadmanID - 1;
-    if (id<0 || id>$scope.indexList.length) {
+    if ($scope.deadmanID < 1) {
       return;
-    };
-
-    socket.emit('scrum:deleteNote', {
-      id: $scope.deadmanID-1
-    })
-    $scope.notes[$scope.deadmanID-1].title = '@null';
+    }
+    if ($scope.deadmanID <= $scope.notes.length) {
+      socket.emit('scrum:deleteNote', {
+        id: $scope.deadmanID-1
+      })
+      $scope.notes[$scope.deadmanID-1].title = '@null';
+    }
+    updateView();
   }
 
   $scope.initCanvas = function() {
